@@ -1,0 +1,14 @@
+name: 'CodeTour Watch'
+description: 'Flags file changes that may affect CodeTour content'
+inputs:
+    repo-token:
+        description: 'The GITHUB_TOKEN, needed to comment the PR'
+        required: true
+
+runs:
+    using: 'node12'
+    main: 'src/index.js'
+
+branding:
+    icon: 'book'
+    color: 'yellow'
