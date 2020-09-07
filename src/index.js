@@ -86,11 +86,7 @@ const commentPr = async (
     impactedTours,
     missingTourUpdates
 ) => {
-    let body;
-    if (missingTourUpdates > 0) {
-        body += '⚠️ ';
-    }
-    body += `**CodeTour Watch**\n\n
+    let body = `**${(missingTourUpdates > 0) ? '⚠️ ' : ''}CodeTour Watch**\n\n
 Changed files with CodeTour:\n\n`;
     impactedFiles.forEach((file) => {
         body += `- \`${file}\`\n`;
@@ -103,7 +99,7 @@ Changed files with CodeTour:\n\n`;
             body += `- \`${tour}\` - ⚠️ **Missing from PR**\n`;
         }
     });
-    body += `\nMake sure to review CodeTours and update line numbers accordingly.`;
+    body += `\nMake sure to review CodeTour files and update line numbers accordingly.`;
     commentInfo.body = body;
 
     await octokit.issues.createComment(commentInfo);
