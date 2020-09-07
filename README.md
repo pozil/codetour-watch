@@ -2,7 +2,9 @@
 
 A GitHub action that flags file changes in a PR that may affect [CodeTour content](https://marketplace.visualstudio.com/items?itemName=vsls-contrib.codetour).
 
-The action comments on the PR to report changes that impact CodeTour.
+The action comments on the PR to report changes that may impact CodeTour:
+
+![Screenshot of comment](docs/comment-screenshot.png)
 
 The action will not comment the PR if changes do not impact CodeTour.
 
@@ -29,7 +31,7 @@ jobs:
 
 | Name     | Description                                         | Default |
 | -------- | --------------------------------------------------- | ------- |
-| `silent` | Optional flag that disables the commment on the PR. | `false` |
+| `silent` | Optional flag that turns off the comment on the PR. | `false` |
 
 ## Outputs
 

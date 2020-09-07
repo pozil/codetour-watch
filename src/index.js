@@ -86,7 +86,9 @@ const commentPr = async (
     impactedTours,
     missingTourUpdates
 ) => {
-    let body = `**${(missingTourUpdates.length > 0) ? '⚠️ ' : ''}CodeTour Watch**\n\n
+    let body = `**${
+        missingTourUpdates.length > 0 ? '⚠️ ' : ''
+    }CodeTour Watch**\n\n
 Changed files with possible CodeTour impact:\n\n`;
     impactedFiles.forEach((file) => {
         body += `- \`${file}\`\n`;
