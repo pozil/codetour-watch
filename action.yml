@@ -2,8 +2,12 @@ name: 'CodeTour Watch'
 description: 'Flags file changes that may affect CodeTour content'
 inputs:
     repo-token:
-        description: 'The GITHUB_TOKEN, needed to comment the PR'
+        description: 'The GITHUB_TOKEN, needed to comment the PR.'
         required: true
+    silent:
+        description: 'Optional flag that turns off the comment on the PR.'
+    tour-path:
+        description: 'Optional flag that specifies a custom `.tour` folder location.'
 
 runs:
     using: 'node12'
