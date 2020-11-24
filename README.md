@@ -31,11 +31,11 @@ jobs:
 
 ## Inputs
 
-| Name         | Description                                                    | Default  |
-| ------------ | -------------------------------------------------------------- | -------- |
-| `repo-token` | The GITHUB_TOKEN, required to comment.                         |          |
-| `silent`     | Optional flag that turns off the comment on the PR.            | `false`  |
-| `tourPath`   | Optional flag that specifies a custom `.tour` folder location. | `.tour`  |
+| Name         | Required | Description                                                    | Default |
+| ------------ | -------- | -------------------------------------------------------------- | ------- |
+| `repo-token` | true     | The GITHUB_TOKEN, required to comment.                         |         |
+| `silent`     | false    | Optional flag that turns off the comment on the PR.            | `false` |
+| `tourPath`   | false    | Optional flag that specifies a custom `.tour` folder location. | `.tour` |
 
 ## Outputs
 
