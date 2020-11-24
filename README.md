@@ -35,7 +35,7 @@ jobs:
 | ------------ | -------- | -------------------------------------------------------------- | ------- |
 | `repo-token` | true     | The GITHUB_TOKEN, required to comment.                         |         |
 | `silent`     | false    | Optional flag that turns off the comment on the PR.            | `false` |
-| `tourPath`   | false    | Optional flag that specifies a custom `.tour` folder location. | `.tour` |
+| `tour-path`  | false    | Optional flag that specifies a custom `.tour` folder location. | `.tour` |
 
 ## Outputs
 
