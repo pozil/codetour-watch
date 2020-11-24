@@ -11,8 +11,8 @@ const run = async () => {
         const isSilentMode =
             core.getInput('silent') &&
             core.getInput('silent').toLowerCase() === 'true';
-        const tourRootPath = core.getInput('tourPath')
-            ? core.getInput('tourPath')
+        const tourRootPath = core.getInput('tour-path')
+            ? core.getInput('tour-path')
             : DEFAULT_TOUR_PATH;
 
         // Get octokit
