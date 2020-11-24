@@ -2,7 +2,7 @@ const core = require('@actions/core');
 const github = require('@actions/github');
 const fs = require('fs');
 
-const TOUR_DIR = '.tours/';
+const DEFAULT_TOUR_PATH = '.tours/';
 
 const run = async () => {
     try {
@@ -11,6 +11,9 @@ const run = async () => {
         const isSilentMode =
             core.getInput('silent') &&
             core.getInput('silent').toLowerCase() === 'true';
+        const tourRootPath = core.getInput('tourPath')
+            ? core.getInput('tourPath')
+            : DEFAULT_TOUR_PATH;
 
         // Get octokit
         const octokit = github.getOctokit(gitHubToken);
@@ -30,7 +33,7 @@ const run = async () => {
         });
 
         // Parse CodeTour definitions
-        const tourDefinitions = await loadCodetours();
+        const tourDefinitions = await loadCodetours(tourRootPath);
 
         // Get files covered by CodeTour
         const touredFiles = getFilesCoveredByCodetour(tourDefinitions);
@@ -128,17 +131,17 @@ const getCodetourFromFiles = (tourDefinitions, files) => {
     return Array.from(defFiles);
 };
 
-const loadCodetours = async () => {
+const loadCodetours = async (tourRootPath) => {
     // List CodeTour definition files
     let defFiles;
     try {
-        defFiles = await fs.promises.readdir(TOUR_DIR);
+        defFiles = await fs.promises.readdir(tourRootPath);
     } catch (error) {
-        throw new Error(`Failed to read ${TOUR_DIR} directory: ${error}`);
+        throw new Error(`Failed to read ${tourRootPath} directory: ${error}`);
     }
     // Parse CodeTour definitions
     return defFiles.map((defFile) => {
-        const path = `${TOUR_DIR}${defFile}`;
+        const path = `${tourRootPath}${defFile}`;
         const definition = JSON.parse(fs.readFileSync(path, 'utf-8'));
         definition.filename = path;
         return definition;
