@@ -24,7 +24,7 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             - name: 'Watch CodeTour changes'
-              uses: pozil/codetour-watch@v1.1
+              uses: pozil/codetour-watch@v1.1.0
               with:
                   repo-token: ${{ secrets.GITHUB_TOKEN }}
 ```
