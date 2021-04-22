@@ -31,11 +31,30 @@ jobs:
 
 ## Inputs
 
-| Name         | Required | Description                                                    | Default |
-| ------------ | -------- | -------------------------------------------------------------- | ------- |
-| `repo-token` | true     | The GITHUB_TOKEN, required to comment.                         |         |
-| `silent`     | false    | Optional flag that turns off the comment on the PR.            | `false` |
-| `tour-path`  | false    | Optional flag that specifies a custom `.tour` folder location. | `.tour` |
+| Name         | Required | Description                                                     | Default  |
+| ------------ | -------- | --------------------------------------------------------------- | -------- |
+| `repo-token` | true     | The GITHUB_TOKEN, required to comment.                          |          |
+| `silent`     | false    | Optional flag that turns off the comment on the PR.             | `false`  |
+| `tour-path`  | false    | Optional flag that specifies a custom `.tours` folder location. | `.tours` |
+| `comment-id` | false    | ID of the comment to update (instead of creating a new one)     | `''`     |
+
+### Updating the comment instead of creating a new one
+
+This action can be used together with [peter-evans/find-comment](https://github.com/peter-evans/find-comment) to update the comment instead of creating a new one:
+
+```yml
+- name: Find codetour-watch comment
+  uses: peter-evans/find-comment@v1
+  id: find_comment
+  with:
+      issue-number: ${{ github.event.pull_request.number }}
+      body-includes: 'CodeTour Watch'
+- name: 'Watch CodeTour changes'
+  uses: pozil/codetour-watch@v1.1.0
+  with:
+      repo-token: ${{ secrets.GITHUB_TOKEN }}
+      comment-id: ${{ steps.find_comment.outputs.comment-id }}
+```
 
 ## Outputs
 

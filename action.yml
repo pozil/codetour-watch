@@ -12,6 +12,10 @@ inputs:
         description: 'Optional flag that specifies a custom `.tour` folder location.'
         required: false
         default: '.tours/'
+    comment-id:
+        description: 'ID of the comment to update (instead of creating a new one)'
+        required: false
+        default: ''
 
 runs:
     using: 'node12'
