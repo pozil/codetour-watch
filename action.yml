@@ -6,8 +6,12 @@ inputs:
         required: true
     silent:
         description: 'Optional flag that turns off the comment on the PR.'
+        required: false
+        default: 'false'
     tour-path:
         description: 'Optional flag that specifies a custom `.tour` folder location.'
+        required: false
+        default: '.tours/'
 
 runs:
     using: 'node12'
