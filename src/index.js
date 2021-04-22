@@ -14,6 +14,7 @@ const run = async () => {
         const tourRootPath = core.getInput('tour-path')
             ? core.getInput('tour-path')
             : DEFAULT_TOUR_PATH;
+        const commentId = core.getInput('comment-id');
 
         // Get octokit
         const octokit = github.getOctokit(gitHubToken);
@@ -61,11 +62,17 @@ const run = async () => {
         if (!isSilentMode && impactedTours.length > 0) {
             await commentPr(
                 octokit,
-                {
-                    owner,
-                    repo,
-                    issue_number: number
-                },
+                commentId
+                    ? {
+                          owner,
+                          repo,
+                          comment_id: commentId
+                      }
+                    : {
+                          owner,
+                          repo,
+                          issue_number: number
+                      },
                 impactedFiles,
                 impactedTours,
                 missingTourUpdates
@@ -107,7 +114,11 @@ Changed files with possible CodeTour impact:\n\n`;
     body += `\nMake sure to review CodeTour files and update line numbers accordingly.`;
     commentInfo.body = body;
 
-    await octokit.issues.createComment(commentInfo);
+    if (commentInfo.comment_id === undefined) {
+        await octokit.issues.createComment(commentInfo);
+    } else {
+        await octokit.issues.updateComment(commentInfo);
+    }
 };
 
 const getPrFiles = async (octokit, prInfo) => {
