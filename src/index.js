@@ -3,6 +3,7 @@ const github = require('@actions/github');
 const fs = require('fs');
 
 const DEFAULT_TOUR_PATH = '.tours/';
+const COMMENT_PREFIX_REGEX = /^\*\*(⚠️ )?CodeTour Watch\*\*/;
 
 const run = async () => {
     try {
@@ -14,7 +15,6 @@ const run = async () => {
         const tourRootPath = core.getInput('tour-path')
             ? core.getInput('tour-path')
             : DEFAULT_TOUR_PATH;
-        const commentId = core.getInput('comment-id');
 
         // Get octokit
         const octokit = github.getOctokit(gitHubToken);
@@ -25,6 +25,14 @@ const run = async () => {
             throw new Error(`Couldn't find PR info in current context`);
         }
         const [owner, repo] = repository.full_name.split('/');
+
+        // Get previous CodeTour watch comment if any
+        const commentId = await getCodeTourWatchComment(
+            octokit,
+            owner,
+            repo,
+            number
+        );
 
         // Get PR changed files
         const prFiles = await getPrFiles(octokit, {
@@ -89,6 +97,35 @@ const run = async () => {
     }
 };
 
+/**
+ * Gets the last CodeTour watch comment id
+ * @param {object} octokit 
+ * @param {string} owner 
+ * @param {string} repo 
+ * @param {number} prNumber 
+ * @returns {number} comment id or null if none found
+ */
+const getCodeTourWatchComment = async (octokit, owner, repo, prNumber) => {
+    const comments = await octokit.paginate(octokit.issues.listComments, {
+        owner,
+        repo,
+        issue_number: prNumber
+    });
+    comments.reverse();
+    const comment = comments.find((comment) =>
+        COMMENT_PREFIX_REGEX.test(comment.body)
+    );
+    return comment ? comment.id : null;
+};
+
+/**
+ * Creates/updates a comment with a CodeTour watch report
+ * @param {object} octokit 
+ * @param {object} commentInfo 
+ * @param {string[]} impactedFiles 
+ * @param {string[]} impactedTours 
+ * @param {string[]} missingTourUpdates 
+ */
 const commentPr = async (
     octokit,
     commentInfo,
@@ -121,15 +158,27 @@ Changed files with possible CodeTour impact:\n\n`;
     }
 };
 
+/**
+ * Gets the list of changed file names from a PR
+ * @param {object} octokit 
+ * @param {object} prInfo 
+ * @returns {string[]} list of file names
+ */
 const getPrFiles = async (octokit, prInfo) => {
     try {
-        const prDetails = await octokit.pulls.listFiles(prInfo);
+        const prDetails = await octokit.paginate(octokit.pulls.listFiles, prInfo);
         return prDetails.data.map((file) => file.filename);
     } catch (error) {
         throw new Error(`Failed to retrieved PR files: ${error}`);
     }
 };
 
+/**
+ * Get the list of tours impacted by some files
+ * @param {object[]} tourDefinitions 
+ * @param {string[]} files 
+ * @returns {string[]} list of tour file names
+ */
 const getCodetourFromFiles = (tourDefinitions, files) => {
     const defFiles = new Set();
     tourDefinitions.forEach((tourDefinition) => {
@@ -142,6 +191,11 @@ const getCodetourFromFiles = (tourDefinitions, files) => {
     return Array.from(defFiles);
 };
 
+/**
+ * Reads tour definitions
+ * @param {string} tourRootPath 
+ * @returns {object[]} list of tour definitions
+ */
 const loadCodetours = async (tourRootPath) => {
     // List CodeTour definition files
     let defFiles;
@@ -159,6 +213,11 @@ const loadCodetours = async (tourRootPath) => {
     });
 };
 
+/**
+ * Gets the list of unique file names covered by tour definitions
+ * @param {object[]} tourDefinitions 
+ * @returns {string[]} list of covered file names
+ */
 const getFilesCoveredByCodetour = (tourDefinitions) => {
     const touredFiles = new Set();
     tourDefinitions.forEach((tourDefinition) => {
