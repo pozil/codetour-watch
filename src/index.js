@@ -106,16 +106,20 @@ const run = async () => {
  * @returns {number} comment id or null if none found
  */
 const getCodeTourWatchComment = async (octokit, owner, repo, prNumber) => {
-    const comments = await octokit.paginate(octokit.issues.listComments, {
-        owner,
-        repo,
-        issue_number: prNumber
-    });
-    comments.reverse();
-    const comment = comments.find((comment) =>
-        COMMENT_PREFIX_REGEX.test(comment.body)
-    );
-    return comment ? comment.id : null;
+    try {
+        const comments = await octokit.paginate(octokit.issues.listComments, {
+            owner,
+            repo,
+            issue_number: prNumber
+        });
+        comments.reverse();
+        const comment = comments.find((comment) =>
+            COMMENT_PREFIX_REGEX.test(comment.body)
+        );
+        return comment ? comment.id : null;
+    } catch (error) {
+        throw new Error(`Failed to retrieved PR comments: ${error}`);
+    }  
 };
 
 /**
@@ -166,7 +170,7 @@ Changed files with possible CodeTour impact:\n\n`;
  */
 const getPrFiles = async (octokit, prInfo) => {
     try {
-        const prDetails = await octokit.paginate(octokit.pulls.listFiles, prInfo);
+        const prDetails = await octokit.pulls.listFiles(prInfo);
         return prDetails.data.map((file) => file.filename);
     } catch (error) {
         throw new Error(`Failed to retrieved PR files: ${error}`);
