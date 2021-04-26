@@ -99,10 +99,10 @@ const run = async () => {
 
 /**
  * Gets the last CodeTour watch comment id
- * @param {object} octokit 
- * @param {string} owner 
- * @param {string} repo 
- * @param {number} prNumber 
+ * @param {object} octokit
+ * @param {string} owner
+ * @param {string} repo
+ * @param {number} prNumber
  * @returns {number} comment id or null if none found
  */
 const getCodeTourWatchComment = async (octokit, owner, repo, prNumber) => {
@@ -119,16 +119,16 @@ const getCodeTourWatchComment = async (octokit, owner, repo, prNumber) => {
         return comment ? comment.id : null;
     } catch (error) {
         throw new Error(`Failed to retrieved PR comments: ${error}`);
-    }  
+    }
 };
 
 /**
  * Creates/updates a comment with a CodeTour watch report
- * @param {object} octokit 
- * @param {object} commentInfo 
- * @param {string[]} impactedFiles 
- * @param {string[]} impactedTours 
- * @param {string[]} missingTourUpdates 
+ * @param {object} octokit
+ * @param {object} commentInfo
+ * @param {string[]} impactedFiles
+ * @param {string[]} impactedTours
+ * @param {string[]} missingTourUpdates
  */
 const commentPr = async (
     octokit,
@@ -164,8 +164,8 @@ Changed files with possible CodeTour impact:\n\n`;
 
 /**
  * Gets the list of changed file names from a PR
- * @param {object} octokit 
- * @param {object} prInfo 
+ * @param {object} octokit
+ * @param {object} prInfo
  * @returns {string[]} list of file names
  */
 const getPrFiles = async (octokit, prInfo) => {
@@ -179,8 +179,8 @@ const getPrFiles = async (octokit, prInfo) => {
 
 /**
  * Get the list of tours impacted by some files
- * @param {object[]} tourDefinitions 
- * @param {string[]} files 
+ * @param {object[]} tourDefinitions
+ * @param {string[]} files
  * @returns {string[]} list of tour file names
  */
 const getCodetourFromFiles = (tourDefinitions, files) => {
@@ -197,7 +197,7 @@ const getCodetourFromFiles = (tourDefinitions, files) => {
 
 /**
  * Reads tour definitions
- * @param {string} tourRootPath 
+ * @param {string} tourRootPath
  * @returns {object[]} list of tour definitions
  */
 const loadCodetours = async (tourRootPath) => {
@@ -219,7 +219,7 @@ const loadCodetours = async (tourRootPath) => {
 
 /**
  * Gets the list of unique file names covered by tour definitions
- * @param {object[]} tourDefinitions 
+ * @param {object[]} tourDefinitions
  * @returns {string[]} list of covered file names
  */
 const getFilesCoveredByCodetour = (tourDefinitions) => {
