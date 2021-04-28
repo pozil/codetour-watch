@@ -23,6 +23,9 @@ jobs:
     codetour-watch:
         runs-on: ubuntu-latest
         steps:
+            - name: 'Checkout source code'
+              uses: actions/checkout@v2
+        
             - name: 'Watch CodeTour changes'
               uses: pozil/codetour-watch@v1.1.0
               with:
