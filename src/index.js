@@ -1,8 +1,10 @@
 const core = require('@actions/core');
 const github = require('@actions/github');
 const fs = require('fs');
+const path = require('path');
 
 const DEFAULT_TOUR_PATH = '.tours/';
+const TOUR_FILE_EXTENSION = '.tour';
 const COMMENT_PREFIX_REGEX = /^\*\*(⚠️ )?CodeTour Watch\*\*/;
 
 const run = async () => {
@@ -42,7 +44,8 @@ const run = async () => {
         });
 
         // Parse CodeTour definitions
-        const tourDefinitions = await loadCodetours(tourRootPath);
+        const tourDefinitions = [];
+        await loadToursFromDirectory(tourRootPath, tourDefinitions);
 
         // Get files covered by CodeTour
         const touredFiles = getFilesCoveredByCodetour(tourDefinitions);
@@ -196,26 +199,31 @@ const getCodetourFromFiles = (tourDefinitions, files) => {
 };
 
 /**
- * Reads tour definitions
- * @param {string} tourRootPath
- * @returns {object[]} list of tour definitions
+ * Recursively reads tour definitions from a directory
+ * @param {string} dirPath
+ * @param {object[]} definitions
  */
-const loadCodetours = async (tourRootPath) => {
-    // List CodeTour definition files
-    let defFiles;
+function loadToursFromDirectory(dirPath, definitions) {
+    // List files in folder
+    let files;
     try {
-        defFiles = await fs.promises.readdir(tourRootPath);
+        files = fs.readdirSync(dirPath, { withFileTypes: true });
     } catch (error) {
-        throw new Error(`Failed to read ${tourRootPath} directory: ${error}`);
+        throw new Error(`Failed to read ${dirPath} directory: ${error}`);
     }
-    // Parse CodeTour definitions
-    return defFiles.map((defFile) => {
-        const path = `${tourRootPath}${defFile}`;
-        const definition = JSON.parse(fs.readFileSync(path, 'utf-8'));
-        definition.filename = path;
-        return definition;
+    // Parse CodeTour definitions and sub-folders
+    files.forEach((file) => {
+        const filePath = path.join(dirPath, file.name);
+        if (file.isFile() && filePath.endsWith(TOUR_FILE_EXTENSION)) {
+            const definition = JSON.parse(fs.readFileSync(filePath, 'utf-8'));
+            definition.filename = filePath;
+            definitions.push(definition);
+        } else if (file.isDirectory()) {
+            console.log('err');
+            loadToursFromDirectory(filePath, definitions);
+        }
     });
-};
+}
 
 /**
  * Gets the list of unique file names covered by tour definitions
