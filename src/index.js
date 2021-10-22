@@ -204,6 +204,10 @@ const getCodetourFromFiles = (tourDefinitions, files) => {
  * @param {object[]} definitions
  */
 function loadToursFromDirectory(dirPath, definitions) {
+    if (!fs.existsSync(dirPath) && dirPath === DEFAULT_TOUR_PATH) {
+        return;
+    }
+
     // List files in folder
     let files;
     try {
