@@ -18,8 +18,8 @@ const run = async () => {
             ? core.getInput('tour-path')
             : DEFAULT_TOUR_PATH;
 
-        // Get octokit
-        const octokit = github.getOctokit(gitHubToken);
+        // Get octokit REST client
+        const octokit = github.getOctokit(gitHubToken).rest;
 
         // Get repo and PR info
         const { repository, number, pull_request } = github.context.payload;
