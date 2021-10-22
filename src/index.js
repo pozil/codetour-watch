@@ -19,7 +19,7 @@ const run = async () => {
             : DEFAULT_TOUR_PATH;
 
         // Get octokit REST client
-        const octokit = github.getOctokit(gitHubToken).rest;
+        const octokit = github.getOctokit(gitHubToken);
 
         // Get repo and PR info
         const { repository, number, pull_request } = github.context.payload;
@@ -110,11 +110,14 @@ const run = async () => {
  */
 const getCodeTourWatchComment = async (octokit, owner, repo, prNumber) => {
     try {
-        const comments = await octokit.paginate(octokit.issues.listComments, {
-            owner,
-            repo,
-            issue_number: prNumber
-        });
+        const comments = await octokit.paginate(
+            octokit.rest.issues.listComments,
+            {
+                owner,
+                repo,
+                issue_number: prNumber
+            }
+        );
         comments.reverse();
         const comment = comments.find((comment) =>
             COMMENT_PREFIX_REGEX.test(comment.body)
@@ -159,9 +162,9 @@ Changed files with possible CodeTour impact:\n\n`;
     commentInfo.body = body;
 
     if (commentInfo.comment_id === undefined) {
-        await octokit.issues.createComment(commentInfo);
+        await octokit.rest.issues.createComment(commentInfo);
     } else {
-        await octokit.issues.updateComment(commentInfo);
+        await octokit.rest.issues.updateComment(commentInfo);
     }
 };
 
@@ -173,7 +176,7 @@ Changed files with possible CodeTour impact:\n\n`;
  */
 const getPrFiles = async (octokit, prInfo) => {
     try {
-        const prDetails = await octokit.pulls.listFiles(prInfo);
+        const prDetails = await octokit.rest.pulls.listFiles(prInfo);
         return prDetails.data.map((file) => file.filename);
     } catch (error) {
         throw new Error(`Failed to retrieved PR files: ${error}`);
