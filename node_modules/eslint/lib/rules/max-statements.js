@@ -9,9 +9,8 @@
 // Requirements
 //------------------------------------------------------------------------------
 
-const lodash = require("lodash");
-
 const astUtils = require("./utils/ast-utils");
+const { upperCaseFirst } = require("../shared/string-utils");
 
 //------------------------------------------------------------------------------
 // Rule Definition
@@ -23,7 +22,6 @@ module.exports = {
 
         docs: {
             description: "enforce a maximum number of statements allowed in function blocks",
-            category: "Stylistic Issues",
             recommended: false,
             url: "https://eslint.org/docs/rules/max-statements"
         },
@@ -97,7 +95,7 @@ module.exports = {
          */
         function reportIfTooManyStatements(node, count, max) {
             if (count > max) {
-                const name = lodash.upperFirst(astUtils.getFunctionNameWithKind(node));
+                const name = upperCaseFirst(astUtils.getFunctionNameWithKind(node));
 
                 context.report({
                     node,

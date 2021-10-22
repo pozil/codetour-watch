@@ -25,7 +25,7 @@ jobs:
         steps:
             - name: 'Checkout source code'
               uses: actions/checkout@v2
-        
+
             - name: 'Watch CodeTour changes'
               uses: pozil/codetour-watch@v1.2.0
               with:
