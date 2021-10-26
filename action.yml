@@ -3,7 +3,8 @@ description: 'Flags file changes that may affect CodeTour content'
 inputs:
     repo-token:
         description: 'The GITHUB_TOKEN, needed to comment the PR.'
-        required: true
+        required: false
+        default: ${{ github.token }}
     silent:
         description: 'Optional flag that turns off the comment on the PR.'
         required: false
