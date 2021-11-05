@@ -34,11 +34,11 @@ jobs:
 
 ## Inputs
 
-| Name         | Required | Description                                                     | Default  |
-| ------------ | -------- | --------------------------------------------------------------- | -------- |
-| `repo-token` | true     | The GITHUB_TOKEN, required to comment.                          |          |
-| `silent`     | false    | Optional flag that turns off the comment on the PR.             | `false`  |
-| `tour-path`  | false    | Optional flag that specifies a custom `.tours` folder location. | `.tours` |
+| Name         | Required | Description                                                     | Default                |
+| ------------ | -------- | --------------------------------------------------------------- | ---------------------- |
+| `repo-token` | false    | The GITHUB_TOKEN, required to comment.                          | `secrets.GITHUB_TOKEN` |
+| `silent`     | false    | Optional flag that turns off the comment on the PR.             | `false`                |
+| `tour-path`  | false    | Optional flag that specifies a custom `.tours` folder location. | `.tours`               |
 
 ## Outputs
 
