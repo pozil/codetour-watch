@@ -1,5 +1,6 @@
 name: 'CodeTour Watch'
 description: 'Flags file changes that may affect CodeTour content'
+author: 'Philippe Ozil <@pozil> and contributors'
 inputs:
     repo-token:
         description: 'The GITHUB_TOKEN, needed to comment the PR.'
