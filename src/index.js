@@ -17,6 +17,10 @@ const run = async () => {
         const tourRootPath = core.getInput('tour-path')
             ? core.getInput('tour-path')
             : DEFAULT_TOUR_PATH;
+        const shouldFailOnMissingTourUpdates =
+            core.getInput('fail-on-missing-tour-updates') &&
+            core.getInput('fail-on-missing-tour-updates').toLowerCase() ===
+                'true';
 
         // Get octokit REST client
         const octokit = github.getOctokit(gitHubToken);
@@ -94,6 +98,11 @@ const run = async () => {
         core.setOutput('impactedFiles', impactedFiles);
         core.setOutput('impactedTours', impactedTours);
         core.setOutput('missingTourUpdates', missingTourUpdates);
+
+        // Check for missing tour updates and report error if needed
+        if (shouldFailOnMissingTourUpdates && missingTourUpdates.length > 0) {
+            core.setFailed('Missing CodeTour updates in PR.');
+        }
     } catch (error) {
         console.error(error);
         core.setFailed(error.message);

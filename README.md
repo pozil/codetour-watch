@@ -27,18 +27,19 @@ jobs:
               uses: actions/checkout@v2
 
             - name: 'Watch CodeTour changes'
-              uses: pozil/codetour-watch@v1.4.0
+              uses: pozil/codetour-watch@v1.6.0
               with:
                   repo-token: ${{ secrets.GITHUB_TOKEN }}
 ```
 
 ## Inputs
 
-| Name         | Required | Description                                                     | Default                |
-| ------------ | -------- | --------------------------------------------------------------- | ---------------------- |
-| `repo-token` | false    | The GITHUB_TOKEN, required to comment.                          | `secrets.GITHUB_TOKEN` |
-| `silent`     | false    | Optional flag that turns off the comment on the PR.             | `false`                |
-| `tour-path`  | false    | Optional flag that specifies a custom `.tours` folder location. | `.tours`               |
+| Name                           | Required | Description                                                                                | Default                |
+| ------------------------------ | -------- | ------------------------------------------------------------------------------------------ | ---------------------- |
+| `repo-token`                   | false    | The GITHUB_TOKEN, required to comment.                                                     | `secrets.GITHUB_TOKEN` |
+| `silent`                       | false    | Optional flag that turns off the comment on the PR.                                        | `false`                |
+| `tour-path`                    | false    | Optional flag that specifies a custom `.tours` folder location.                            | `.tours`               |
+| `fail-on-missing-tour-updates` | false    | Optional flag that forces the action to fail when update tour files are missing from a PR. | `false`                |
 
 ## Outputs
 

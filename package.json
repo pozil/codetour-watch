@@ -1,6 +1,6 @@
 {
     "name": "codetour-watch",
-    "version": "1.5.0",
+    "version": "1.6.0",
     "description": "GitHub Action that flags file changes that may affect CodeTour content",
     "main": "src/index.js",
     "scripts": {
@@ -16,10 +16,10 @@
         "@actions/github": "^5.0.0"
     },
     "devDependencies": {
-        "eslint": "^8.1.0",
+        "eslint": "^8.10.0",
         "husky": "^7.0.4",
-        "lint-staged": "^11.2.6",
-        "prettier": "^2.4.1"
+        "lint-staged": "^12.3.4",
+        "prettier": "^2.5.1"
     },
     "license": "CC0-1.0",
     "repository": {
