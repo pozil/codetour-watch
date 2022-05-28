@@ -11,16 +11,13 @@ const run = async () => {
     try {
         // Get inputs
         const gitHubToken = core.getInput('repo-token', { required: true });
-        const isSilentMode =
-            core.getInput('silent') &&
-            core.getInput('silent').toLowerCase() === 'true';
+        const isSilentMode = core.getBooleanInput('silent');
         const tourRootPath = core.getInput('tour-path')
             ? core.getInput('tour-path')
             : DEFAULT_TOUR_PATH;
-        const shouldFailOnMissingTourUpdates =
-            core.getInput('fail-on-missing-tour-updates') &&
-            core.getInput('fail-on-missing-tour-updates').toLowerCase() ===
-                'true';
+        const shouldFailOnMissingTourUpdates = core.getBooleanInput(
+            'fail-on-missing-tour-updates'
+        );
 
         // Get octokit REST client
         const octokit = github.getOctokit(gitHubToken);
