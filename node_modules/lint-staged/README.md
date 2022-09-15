@@ -2,6 +2,10 @@
 
 Run linters against staged git files and don't let :poop: slip into your code base!
 
+```bash
+npm install --save-dev lint-staged # requires further setup
+```
+
 ```
 $ git commit
 
@@ -44,13 +48,17 @@ This project contains a script that will run arbitrary shell tasks with a list o
 
 ## Installation and setup
 
-The fastest way to start using lint-staged is to run the following command in your terminal:
+To install _lint-staged_ in the recommended way, you need to:
 
-```bash
-npx mrm@2 lint-staged
-```
-
-This command will install and configure [husky](https://github.com/typicode/husky) and lint-staged depending on the code quality tools from your project's `package.json` dependencies, so please make sure you install (`npm install --save-dev`) and configure all code quality tools like [Prettier](https://prettier.io) and [ESLint](https://eslint.org) prior to that.
+1. Install _lint-staged_ itself:
+   - `npm install --save-dev lint-staged`
+1. Set up the `pre-commit` git hook to run _lint-staged_
+   - [Husky](https://github.com/typicode/husky) is a popular choice for configuring git hooks
+   - Read more about git hooks [here](https://git-scm.com/book/en/v2/Customizing-Git-Git-Hooks)
+1. Install some linters, like [ESLint](https://eslint.org) or [Prettier](https://prettier.io)
+1. Configure _lint-staged_ to run linters and other tasks:
+   - for example: `{ "*.js": "eslint" }` to run ESLint for all staged JS files
+   - See [Configuration](#Configuration) for more info
 
 Don't forget to commit changes to `package.json` and `.husky` to share this setup with your team!
 
@@ -63,6 +71,10 @@ See [examples](#examples) and [configuration](#configuration) for more informati
 See [Releases](https://github.com/okonet/lint-staged/releases).
 
 ### Migration
+
+#### v13
+
+- Since `v13.0.0` _lint-staged_ no longer supports Node.js 12. Please upgrade your Node.js version to at least `14.13.1`, or `16.0.0` onward.
 
 #### v12
 
@@ -92,6 +104,10 @@ Options:
   -c, --config [path]                path to configuration file, or - to read from stdin
   --cwd [path]                       run all tasks in specific directory, instead of the current
   -d, --debug                        print additional debug information (default: false)
+  --diff [string]                    override the default "--staged" flag of "git diff" to get list of files. Implies
+                                     "--no-stash".
+  --diff-filter [string]             override the default "--diff-filter=ACMR" flag of "git diff" to get list of files
+  --max-arg-length [number]          maximum length of the command-line argument string (default: 0)
   --no-stash                         disable the backup stash, and do not revert in case of errors
   -q, --quiet                        disable lint-staged’s own console output (default: false)
   -r, --relative                     pass relative filepaths to tasks (default: false)
@@ -102,7 +118,7 @@ Options:
 ```
 
 - **`--allow-empty`**: By default, when linter tasks undo all staged changes, lint-staged will exit with an error and abort the commit. Use this flag to allow creating empty git commits.
-- **`--concurrent [number|boolean]`**: Controls the concurrency of tasks being run by lint-staged. **NOTE**: This does NOT affect the concurrency of subtasks (they will always be run sequentially). Possible values are:
+- **`--concurrent [number|boolean]`**: Controls the [concurrency of tasks](#task-concurrency) being run by lint-staged. **NOTE**: This does NOT affect the concurrency of subtasks (they will always be run sequentially). Possible values are:
   - `false`: Run all tasks serially
   - `true` (default) : _Infinite_ concurrency. Runs as many tasks in parallel as possible.
   - `{number}`: Run the specified number of tasks in parallel, where `1` is equivalent to `false`.
@@ -111,6 +127,9 @@ Options:
 - **`--debug`**: Run in debug mode. When set, it does the following:
   - uses [debug](https://github.com/visionmedia/debug) internally to log additional information about staged files, commands being executed, location of binaries, etc. Debug logs, which are automatically enabled by passing the flag, can also be enabled by setting the environment variable `$DEBUG` to `lint-staged*`.
   - uses [`verbose` renderer](https://github.com/SamVerschueren/listr-verbose-renderer) for `listr`; this causes serial, uncoloured output to the terminal, instead of the default (beautified, dynamic) output.
+- **`--diff`**: By default linters are filtered against all files staged in git, generated from `git diff --staged`. This option allows you to override the `--staged` flag with arbitrary revisions. For example to get a list of changed files between two branches, use `--diff="branch1...branch2"`. You can also read more from about [git diff](https://git-scm.com/docs/git-diff) and [gitrevisions](https://git-scm.com/docs/gitrevisions).
+- **`--diff-filter`**: By default only files that are _added_, _copied_, _modified_, or _renamed_ are included. Use this flag to override the default `ACMR` value with something else: _added_ (`A`), _copied_ (`C`), _deleted_ (`D`), _modified_ (`M`), _renamed_ (`R`), _type changed_ (`T`), _unmerged_ (`U`), _unknown_ (`X`), or _pairing broken_ (`B`). See also the `git diff` docs for [--diff-filter](https://git-scm.com/docs/git-diff#Documentation/git-diff.txt---diff-filterACDMRTUXB82308203).
+- **`--max-arg-length`**: long commands (a lot of files) are automatically split into multiple chunks when it detects the current shell cannot handle them. Use this flag to override the maximum length of the generated command string.
 - **`--no-stash`**: By default a backup stash will be created before running the tasks, and all task modifications will be reverted in case of an error. This option will disable creating the stash, and instead leave all modifications in the index when aborting the commit.
 - **`--quiet`**: Supress all CLI output, except from tasks.
 - **`--relative`**: Pass filepaths relative to `process.cwd()` (where `lint-staged` runs) to tasks. Default is `false`.
@@ -119,7 +138,7 @@ Options:
 
 ## Configuration
 
-Starting with v3.1 you can now use different ways of configuring lint-staged:
+_Lint-staged_ can be configured in many ways:
 
 - `lint-staged` object in your `package.json`
 - `.lintstagedrc` file in JSON or YML format, or you can be explicit with the file extension:
@@ -161,6 +180,37 @@ This config will execute `your-cmd` with the list of currently staged files pass
 So, considering you did `git add file1.ext file2.ext`, lint-staged will run the following command:
 
 `your-cmd file1.ext file2.ext`
+
+### Task concurrency
+
+By default _lint-staged_ will run configured tasks concurrently. This means that for every glob, all the commands will be started at the same time. With the following config, both `eslint` and `prettier` will run at the same time:
+
+```json
+{
+  "*.ts": "eslint",
+  "*.md": "prettier --list-different"
+}
+```
+
+This is typically not a problem since the globs do not overlap, and the commands do not make changes to the files, but only report possible errors (aborting the git commit). If you want to run multiple commands for the same set of files, you can use the array syntax to make sure commands are run in order. In the following example, `prettier` will run for both globs, and in addition `eslint` will run for `*.ts` files _after_ it. Both sets of commands (for each glob) are still started at the same time (but do not overlap).
+
+```json
+{
+  "*.ts": ["prettier --list-different", "eslint"],
+  "*.md": "prettier --list-different"
+}
+```
+
+Pay extra attention when the configured globs overlap, and tasks make edits to files. For example, in this configuration `prettier` and `eslint` might try to make changes to the same `*.ts` file at the same time, causing a _race condition_:
+
+```json
+{
+  "*": "prettier --write",
+  "*.ts": "eslint --fix"
+}
+```
+
+If necessary, you can limit the concurrency using `--concurrent <number>` or disable it entirely with `--concurrent false`.
 
 ## Filtering files
 
@@ -594,9 +644,9 @@ const success = await lintStaged({
   maxArgLength: null,
   quiet: false,
   relative: false,
-  shell: false
+  shell: false,
   stash: true,
-  verbose: false
+  verbose: false,
 })
 ```
 
@@ -710,6 +760,30 @@ In certain project setups, it might be desirable to bypass this restriction. See
 Note that patterns like `*.js`, `**/*.js` will still only match the project files and not any of the files in parent or sibling directories.
 
 Example repo: [sudo-suhas/lint-staged-django-react-demo](https://github.com/sudo-suhas/lint-staged-django-react-demo).
+
+</details>
+
+### Can I run `lint-staged` in CI, or when there are no staged files?
+
+<details>
+  <summary>Click to expand</summary>
+
+Lint-staged will by default run against files staged in git, and should be run during the git pre-commit hook, for example. It's also possible to override this default behaviour and run against files in a specific diff, for example
+all changed files between two different branches. If you want to run _lint-staged_ in the CI, maybe you can set it up to compare the branch in a _Pull Request_/_Merge Request_ to the target branch.
+
+Try out the `git diff` command until you are satisfied with the result, for example:
+
+```
+git diff --diff-filter=ACMR --name-only master...my-branch
+```
+
+This will print a list of _added_, _changed_, _modified_, and _renamed_ files between `master` and `my-branch`.
+
+You can then run lint-staged against the same files with:
+
+```
+npx lint-staged --diff="master...my-branch"
+```
 
 </details>
 
