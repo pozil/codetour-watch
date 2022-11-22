@@ -24,10 +24,10 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             - name: 'Checkout source code'
-              uses: actions/checkout@v2
+              uses: actions/checkout@v3
 
             - name: 'Watch CodeTour changes'
-              uses: pozil/codetour-watch@v1.6.0
+              uses: pozil/codetour-watch@v1.6.3
               with:
                   repo-token: ${{ secrets.GITHUB_TOKEN }}
 ```
