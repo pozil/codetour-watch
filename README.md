@@ -38,7 +38,7 @@ jobs:
 | ------------------------------ | -------- | ------------------------------------------------------------------------------------------ | ---------------------- |
 | `repo-token`                   | false    | The GITHUB_TOKEN, required to comment.                                                     | `secrets.GITHUB_TOKEN` |
 | `silent`                       | false    | Optional flag that turns off the comment on the PR.                                        | `false`                |
-| `tour-path`                    | false    | Optional flag that specifies a custom `.tours` folder location.                            | `.tours`               |
+| `tour-path`                    | false    | Optional parameter that specifies a custom `.tours` folder location.                       | `.tours`               |
 | `fail-on-missing-tour-updates` | false    | Optional flag that forces the action to fail when update tour files are missing from a PR. | `false`                |
 
 ## Outputs
