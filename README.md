@@ -27,7 +27,7 @@ jobs:
               uses: actions/checkout@v3
 
             - name: 'Watch CodeTour changes'
-              uses: pozil/codetour-watch@v1.6.3
+              uses: pozil/codetour-watch@v3.0.0
               with:
                   repo-token: ${{ secrets.GITHUB_TOKEN }}
 ```
