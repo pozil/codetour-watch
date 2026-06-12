@@ -1,7 +1,7 @@
-const core = require('@actions/core');
-const github = require('@actions/github');
-const fs = require('fs');
-const path = require('path');
+import core from '@actions/core';
+import github from '@actions/github';
+import fs from 'fs';
+import path from 'path';
 
 const DEFAULT_TOUR_PATH = '.tours/';
 const TOUR_FILE_EXTENSION = '.tour';
@@ -130,7 +130,7 @@ const getCodeTourWatchComment = async (octokit, owner, repo, prNumber) => {
         );
         return comment ? comment.id : null;
     } catch (error) {
-        throw new Error(`Failed to retrieved PR comments: ${error}`);
+        throw new Error(`Failed to retrieved PR comments: ${error}`, { cause: error });
     }
 };
 
@@ -185,7 +185,7 @@ const getPrFiles = async (octokit, prInfo) => {
         const prDetails = await octokit.rest.pulls.listFiles(prInfo);
         return prDetails.data.map((file) => file.filename);
     } catch (error) {
-        throw new Error(`Failed to retrieved PR files: ${error}`);
+        throw new Error(`Failed to retrieved PR files: ${error}`, { cause: error });
     }
 };
 
@@ -222,7 +222,7 @@ function loadToursFromDirectory(dirPath, definitions) {
     try {
         files = fs.readdirSync(dirPath, { withFileTypes: true });
     } catch (error) {
-        throw new Error(`Failed to read ${dirPath} directory: ${error}`);
+        throw new Error(`Failed to read ${dirPath} directory: ${error}`, { cause: error });
     }
     // Parse CodeTour definitions and sub-folders
     files.forEach((file) => {

@@ -1,7 +1,8 @@
 {
     "name": "codetour-watch",
-    "version": "3.0.0",
+    "version": "4.0.0",
     "description": "GitHub Action that flags file changes that may affect CodeTour content",
+    "type": "module",
     "main": "src/index.js",
     "scripts": {
         "lint": "eslint src/**/*.js",
@@ -12,14 +13,16 @@
     },
     "author": "Philippe Ozil (pozil)",
     "dependencies": {
-        "@actions/core": "^1.10.1",
-        "@actions/github": "^6.0.0"
+        "@actions/core": "^3.0.1",
+        "@actions/github": "^9.1.1"
     },
     "devDependencies": {
-        "eslint": "^9.2.0",
-        "husky": "^9.0.11",
-        "lint-staged": "^15.2.2",
-        "prettier": "^3.2.5"
+        "@eslint/js": "^10.0.1",
+        "eslint": "^10.4.1",
+        "globals": "^17.6.0",
+        "husky": "^9.1.7",
+        "lint-staged": "^17.0.7",
+        "prettier": "^3.8.3"
     },
     "license": "CC0-1.0",
     "repository": {
@@ -42,9 +45,9 @@
         ]
     },
     "engines": {
-        "node": ">=20"
+        "node": ">=24"
     },
     "volta": {
-        "node": "20.13.1"
+        "node": "24.16.0"
     }
 }
