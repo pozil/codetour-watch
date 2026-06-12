@@ -11,12 +11,15 @@ const run = async () => {
     try {
         // Get inputs
         const gitHubToken = core.getInput('repo-token', { required: true });
-        const isSilentMode = core.getBooleanInput('silent');
-        const tourRootPath = core.getInput('tour-path')
+        const isSilentMode = core.getBooleanInput('silent', {
+            required: false
+        });
+        const tourRootPath = core.getInput('tour-path', { required: false })
             ? core.getInput('tour-path')
             : DEFAULT_TOUR_PATH;
         const shouldFailOnMissingTourUpdates = core.getBooleanInput(
-            'fail-on-missing-tour-updates'
+            'fail-on-missing-tour-updates',
+            { required: false }
         );
 
         // Get octokit REST client
@@ -130,7 +133,9 @@ const getCodeTourWatchComment = async (octokit, owner, repo, prNumber) => {
         );
         return comment ? comment.id : null;
     } catch (error) {
-        throw new Error(`Failed to retrieved PR comments: ${error}`, { cause: error });
+        throw new Error(`Failed to retrieved PR comments: ${error}`, {
+            cause: error
+        });
     }
 };
 
@@ -185,7 +190,9 @@ const getPrFiles = async (octokit, prInfo) => {
         const prDetails = await octokit.rest.pulls.listFiles(prInfo);
         return prDetails.data.map((file) => file.filename);
     } catch (error) {
-        throw new Error(`Failed to retrieved PR files: ${error}`, { cause: error });
+        throw new Error(`Failed to retrieved PR files: ${error}`, {
+            cause: error
+        });
     }
 };
 
@@ -222,7 +229,9 @@ function loadToursFromDirectory(dirPath, definitions) {
     try {
         files = fs.readdirSync(dirPath, { withFileTypes: true });
     } catch (error) {
-        throw new Error(`Failed to read ${dirPath} directory: ${error}`, { cause: error });
+        throw new Error(`Failed to read ${dirPath} directory: ${error}`, {
+            cause: error
+        });
     }
     // Parse CodeTour definitions and sub-folders
     files.forEach((file) => {
